@@ -1,15 +1,19 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
-/* Basic reset for a premium feel */
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
   }
 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1; /* Makes fonts look sharper */
+    /* Ensure these transition classes are here for the smooth effect */
+    @apply bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-50 antialiased transition-colors duration-300;
   }
 }
-
