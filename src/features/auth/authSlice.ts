@@ -1,5 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { AuthState, User } from '@/types';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit'; // <--- Separate "type" import
+import type { AuthState, User } from '@/types';
 
 // Dummy Credentials [cite: 23, 24]
 const DUMMY_CREDS = {
