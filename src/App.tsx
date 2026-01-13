@@ -1,28 +1,27 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from '@/pages/Login';
 import ProtectedRoute from '@/components/layout/ProtectedRoute';
+import DashboardLayout from '@/components/layout/DashboardLayout'; 
 
-// Placeholder Dashboard (We will build the real one in Phase 4)
-const Dashboard = () => (
-  <div className="p-10">
-    <h1 className="text-3xl font-bold">Welcome to Dashboard</h1>
-    <p>This is a protected route.</p>
-  </div>
+
+const DashboardPlaceholder = () => (
+  <div className="text-gray-500">Dashboard content loading...</div>
 );
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
+        {/* Protected Area */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Dashboard />} />
+     
+          <Route element={<DashboardLayout />}> 
+             <Route path="/" element={<DashboardPlaceholder />} />
+          </Route>
         </Route>
 
-        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
