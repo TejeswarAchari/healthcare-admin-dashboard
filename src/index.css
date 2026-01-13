@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Basic reset for a premium feel */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1; /* Makes fonts look sharper */
+  }
+}
+
