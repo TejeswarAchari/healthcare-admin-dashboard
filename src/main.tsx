@@ -17,7 +17,7 @@ const logErrorToService = (error: Error, info: { componentStack?: string | null 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
           onError={logErrorToService}

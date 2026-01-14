@@ -508,6 +508,11 @@ npm run preview          # Preview production build locally
 # Code Quality
 npm run lint             # Check code style with ESLint
 npm run lint --fix       # Auto-fix ESLint issues
+
+# Testing
+npm test                 # Run all tests in watch mode
+npm run test:ui          # Run tests with Vitest UI dashboard
+npm run test:coverage    # Generate test coverage report
 ```
 
 ### File Size Analysis
@@ -556,6 +561,327 @@ npm run dev -- --port 3000
 - Ensure you're viewing on device < 768px width
 - Test in browser DevTools responsive mode
 - Clear browser cache
+
+---
+
+## 🧪 Testing Architecture
+
+### Overview
+
+HealthAdmin implements a **comprehensive testing strategy** using modern testing tools:
+
+- **Vitest 4.0** - Lightning-fast unit test framework (Jest-compatible API)
+- **React Testing Library 16.3** - Component testing with user-centric queries
+- **Jest-DOM** - Custom matchers for DOM assertions
+- **User Event 14.6** - Realistic user interaction simulation
+- **JSDOM** - Browser environment simulation for Node.js
+
+### Test Structure
+
+```
+src/
+├── test/
+│   └── setup.ts                               # Global test configuration
+│
+├── features/
+│   └── dashboard/
+│       ├── StatusBadge.tsx                    # Component
+│       └── __tests__/
+│           └── StatusBadge.test.tsx           # Unit tests
+│
+└── pages/
+    ├── Login.tsx                              # Page component
+    └── __tests__/
+        └── Login.test.tsx                     # Integration tests
+```
+
+### Running Tests
+
+#### Watch Mode (Development)
+```bash
+npm test
+```
+- Reruns tests on file changes
+- Shows test results in terminal
+- Best for active development
+
+#### Interactive UI Dashboard
+```bash
+npm run test:ui
+```
+- Opens Vitest UI at `http://localhost:51204/__vitest__/`
+- Visual test explorer with detailed logs
+- Filter tests by file, status, or search term
+
+#### Coverage Report
+```bash
+npm run test:coverage
+```
+- Generates `coverage/` directory with HTML report
+- Shows line, branch, function, and statement coverage
+- Helps identify untested code paths
+
+### Test Examples
+
+#### 1. Unit Test - StatusBadge Component
+
+**File:** `src/features/dashboard/__tests__/StatusBadge.test.tsx`
+
+```tsx
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { StatusBadge } from '../StatusBadge';
+
+describe('StatusBadge Component', () => {
+  it('renders Active status with correct styling', () => {
+    render(<StatusBadge status="Active" />);
+    const badge = screen.getByText('Active');
+    
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveClass('bg-green-50', 'text-green-700');
+  });
+
+  it('supports dark mode classes', () => {
+    render(<StatusBadge status="Critical" />);
+    const badge = screen.getByText('Critical');
+    
+    expect(badge).toHaveClass('dark:bg-red-900/30', 'dark:text-red-400');
+  });
+});
+```
+
+**What it tests:**
+- ✅ Correct status text rendering
+- ✅ Status-specific CSS classes (green for Active, red for Critical)
+- ✅ Dark mode support
+- ✅ Component structure and accessibility
+
+---
+
+#### 2. Integration Test - Login Page
+
+**File:** `src/pages/__tests__/Login.test.tsx`
+
+```tsx
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import Login from '../Login';
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from '@/features/auth/authSlice';
+
+describe('Login Page', () => {
+  let store: ReturnType<typeof configureStore>;
+
+  beforeEach(() => {
+    store = configureStore({
+      reducer: { auth: authReducer },
+    });
+  });
+
+  it('renders login form with all elements', () => {
+    render(
+      <Provider store={store}>
+        <BrowserRouter>
+          <Login />
+        </BrowserRouter>
+      </Provider>
+    );
+
+    expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+  });
+
+  it('shows error for invalid email format', async () => {
+    const user = userEvent.setup();
+    render(/* ... */);
+
+    const emailInput = screen.getByLabelText(/email address/i);
+    await user.clear(emailInput);
+    await user.type(emailInput, 'invalid-email');
+    fireEvent.blur(emailInput);
+
+    await waitFor(() => {
+      expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
+    });
+  });
+
+  it('toggles password visibility', async () => {
+    const user = userEvent.setup();
+    render(/* ... */);
+
+    const passwordInput = screen.getByLabelText(/password/i) as HTMLInputElement;
+    const toggleButton = screen.getByRole('button', { name: /show password/i });
+
+    expect(passwordInput.type).toBe('password');
+    await user.click(toggleButton);
+    expect(passwordInput.type).toBe('text');
+  });
+});
+```
+
+**What it tests:**
+- ✅ Form rendering and structure
+- ✅ Email validation logic (regex, required field)
+- ✅ Password visibility toggle functionality
+- ✅ Redux state integration (isLoading, error, isAuthenticated)
+- ✅ React Router navigation on success
+- ✅ Accessibility (labels, aria-labels)
+- ✅ Responsive design classes
+
+---
+
+### Test Configuration
+
+**File:** `vite.config.ts`
+
+```ts
+export default defineConfig({
+  // ... other config
+  test: {
+    globals: true,              // Use global test functions (describe, it, expect)
+    environment: 'jsdom',       // Simulate browser environment
+    setupFiles: './src/test/setup.ts',  // Run setup before all tests
+    css: true,                  // Process CSS imports
+  },
+});
+```
+
+**File:** `src/test/setup.ts`
+
+```ts
+import '@testing-library/jest-dom';  // Custom matchers like toBeInTheDocument()
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+// Cleanup after each test (removes rendered components from DOM)
+afterEach(() => {
+  cleanup();
+});
+```
+
+---
+
+### Testing Best Practices
+
+#### ✅ Write User-Centric Tests
+```tsx
+// ❌ Bad - Testing implementation details
+expect(component.state.isOpen).toBe(true);
+
+// ✅ Good - Testing user experience
+expect(screen.getByText('Modal Content')).toBeVisible();
+```
+
+#### ✅ Use Semantic Queries
+Priority order:
+1. `getByRole` - Accessible to screen readers
+2. `getByLabelText` - Form fields
+3. `getByText` - Visible text
+4. `getByTestId` - Last resort
+
+```tsx
+// ✅ Best
+screen.getByRole('button', { name: /submit/i });
+
+// ✅ Good
+screen.getByLabelText(/email address/i);
+
+// ⚠️ Avoid if possible
+screen.getByTestId('submit-button');
+```
+
+#### ✅ Test Accessibility
+```tsx
+it('has accessible form labels', () => {
+  render(<Login />);
+  
+  expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /show password/i })).toHaveAttribute('aria-label');
+});
+```
+
+#### ✅ Mock External Dependencies
+```tsx
+// Mock React Router navigation
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+```
+
+---
+
+### Coverage Goals
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| **Statements** | > 80% | 🎯 Implement tests |
+| **Branches** | > 75% | 🎯 Implement tests |
+| **Functions** | > 80% | 🎯 Implement tests |
+| **Lines** | > 80% | 🎯 Implement tests |
+
+**Priority Components for Testing:**
+1. ✅ Login.tsx - Critical authentication logic
+2. ✅ StatusBadge.tsx - Reusable UI component
+3. 🔜 DashboardView.tsx - Core dashboard functionality
+4. 🔜 RecentPatientsTable.tsx - Complex search/filter logic
+5. 🔜 ProtectedRoute.tsx - Authorization guard
+
+---
+
+### Testing Commands Cheat Sheet
+
+```bash
+# Run all tests once
+npm test -- --run
+
+# Run specific test file
+npm test Login.test.tsx
+
+# Run tests matching pattern
+npm test -- --grep "email validation"
+
+# Watch mode with coverage
+npm test -- --coverage
+
+# Update snapshots
+npm test -- -u
+
+# Debug mode
+npm test -- --inspect-brk
+```
+
+---
+
+### Continuous Integration (CI)
+
+Add to `.github/workflows/test.yml`:
+
+```yaml
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npm test -- --run
+      - run: npm run test:coverage
+```
 
 ---
 
