@@ -35,13 +35,16 @@ const MOCK_DATA: DashboardData = {
     totalAppointments: 320,
     activeClinics: 12,
   },
-  recentPatients: [
-    { id: 'p_1', name: 'Sarah Connor', status: 'Active', lastVisit: '2023-10-24', age: 45, assignedDoctor: 'Dr. Silberman' },
-    { id: 'p_2', name: 'John Doe', status: 'Recovered', lastVisit: '2023-10-22', age: 32, assignedDoctor: 'Dr. House' },
-    { id: 'p_3', name: 'Jane Smith', status: 'Critical', lastVisit: '2023-10-25', age: 28, assignedDoctor: 'Dr. Strange' },
-    { id: 'p_4', name: 'Ellen Ripley', status: 'Active', lastVisit: '2023-10-20', age: 35, assignedDoctor: 'Dr. McCoy' },
-    { id: 'p_5', name: 'Bruce Wayne', status: 'Recovered', lastVisit: '2023-10-18', age: 40, assignedDoctor: 'Dr. Quinn' },
-  ],
+recentPatients: [
+  { id: 'p_1', name: 'Ramesh Kumar', status: 'Active', lastVisit: '2026-01-05', age: 46, assignedDoctor: 'Dr. Anil Sharma' },
+  { id: 'p_2', name: 'Sita Reddy', status: 'Recovered', lastVisit: '2026-01-02', age: 34, assignedDoctor: 'Dr. Kavita Rao' },
+  { id: 'p_3', name: 'Arjun Verma', status: 'Critical', lastVisit: '2026-01-11', age: 29, assignedDoctor: 'Dr. Rohit Mehta' },
+  { id: 'p_4', name: 'Lakshmi Narayan', status: 'Active', lastVisit: '2026-01-08', age: 52, assignedDoctor: 'Dr. Sunita Iyer' },
+  { id: 'p_5', name: 'Vikram Singh', status: 'Recovered', lastVisit: '2026-01-01', age: 41, assignedDoctor: 'Dr. Pankaj Gupta' },
+  { id: 'p_6', name: 'Ananya Choudhary', status: 'Active', lastVisit: '2026-01-10', age: 26, assignedDoctor: 'Dr. Neha Malhotra' },
+  { id: 'p_7', name: 'Mahesh Patil', status: 'Critical', lastVisit: '2026-01-12', age: 58, assignedDoctor: 'Dr. Sanjay Kulkarni' },
+],
+
 };
 
 // --- Thunk ---

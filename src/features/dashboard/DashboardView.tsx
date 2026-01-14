@@ -6,6 +6,7 @@ import RecentPatientsTable from './RecentPatientsTable';
 import { Users, Stethoscope, Calendar, Activity } from 'lucide-react';
 
 const DashboardView = () => {
+    // throw new Error("Test Crash!");
   const dispatch = useAppDispatch();
   const { data, isLoading, error } = useAppSelector((state) => state.dashboard);
 

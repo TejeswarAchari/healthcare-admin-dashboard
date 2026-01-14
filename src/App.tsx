@@ -3,6 +3,7 @@ import Login from '@/pages/Login';
 import ProtectedRoute from '@/components/layout/ProtectedRoute';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import DashboardView from '@/features/dashboard/DashboardView';
+import NotFound from '@/pages/NotFound';
 
 function App() {
   return (
@@ -23,8 +24,8 @@ function App() {
           </Route>
         </Route>
 
-        {/* Catch-all: Redirect unknown routes to Home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 404 Route: Catches EVERYTHING else */}
+        <Route path="*" element={<NotFound />} /> {/* <--- The Fix */}
       </Routes>
     </Router>
   );
