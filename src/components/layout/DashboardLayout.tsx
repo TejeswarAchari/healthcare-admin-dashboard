@@ -2,9 +2,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { logout } from "@/features/auth/authSlice";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as Dialog from "@radix-ui/react-dialog";
 import { ModeToggle } from "./ModeToggle";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { useState } from "react";
 
 import {
   LayoutDashboard,
@@ -15,6 +17,8 @@ import {
   User as UserIcon,
   ChevronDown,
   Stethoscope,
+  Menu,
+  X,
 } from "lucide-react";
 
 const SidebarItem = ({
@@ -43,6 +47,7 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleComingSoon = (feature: string) => {
     toast.info("Coming Soon", {
@@ -107,6 +112,17 @@ const DashboardLayout = () => {
       <main className="flex-1 md:ml-64 min-h-screen flex flex-col">
         {/* Header */}
         <header className="h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Open menu"
+            >
+              <Menu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
+            </button>
+          </div>
+
           <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
             Overview
           </h1>
@@ -166,6 +182,79 @@ const DashboardLayout = () => {
           <Outlet />
         </div>
       </main>
+
+      {/* Mobile Sidebar Drawer */}
+      <Dialog.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-40 bg-black/50 md:hidden" />
+          <Dialog.Content className="fixed left-0 top-0 z-50 h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-0 flex flex-col animate-in slide-in-from-left duration-300 md:hidden">
+            {/* Close Button & Title */}
+            <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-800">
+              <div className="flex items-center gap-2 font-bold text-lg text-indigo-600 dark:text-indigo-400">
+                <LayoutDashboard className="h-5 w-5" />
+                <span>HealthAdmin</span>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+              <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                <SidebarItem
+                  icon={LayoutDashboard}
+                  label="Dashboard"
+                  active={location.pathname === "/"}
+                />
+              </Link>
+
+              <Link to="/patients" onClick={() => setMobileMenuOpen(false)}>
+                <SidebarItem
+                  icon={Users}
+                  label="Patients"
+                  active={location.pathname === "/patients"}
+                />
+              </Link>
+
+              <div onClick={() => handleComingSoon("Doctor profiles")}>
+                <SidebarItem icon={Stethoscope} label="Doctors" />
+              </div>
+
+              <div onClick={() => handleComingSoon("Appointment scheduling")}>
+                <SidebarItem icon={Calendar} label="Appointments" />
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
+                <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
+                  <SidebarItem
+                    icon={Settings}
+                    label="Settings"
+                    active={location.pathname === "/settings"}
+                  />
+                </Link>
+              </div>
+            </nav>
+
+            {/* Logout at Bottom */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 };

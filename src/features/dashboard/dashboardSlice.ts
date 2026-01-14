@@ -50,7 +50,7 @@ recentPatients: [
 // --- Thunk ---
 export const fetchDashboardData = createAsyncThunk(
   'dashboard/fetchData',
-  async (_, { rejectWithValue }) => {
+  async () => {
     // Simulate API latency
     await new Promise((resolve) => setTimeout(resolve, 1000));
     

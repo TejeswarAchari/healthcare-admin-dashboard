@@ -111,37 +111,61 @@ const RecentPatientsTable = ({ patients,title = "Recent Patients" }: RecentPatie
       {/* TABLE CONTENT */}
       <div className="overflow-x-auto">
         {filteredPatients.length > 0 ? (
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-            <thead className="bg-gray-50 dark:bg-gray-800/50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Patient Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assigned Doctor</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Last Visit</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-              {filteredPatients.map((patient) => (
-                <tr key={patient.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200 flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">
-                        {patient.name.charAt(0)}
-                    </div>
-                    {patient.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={patient.status} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {patient.assignedDoctor}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {patient.lastVisit}
-                  </td>
+          <>
+            {/* Desktop Table */}
+            <table className="hidden md:table min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+              <thead className="bg-gray-50 dark:bg-gray-800/50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Patient Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assigned Doctor</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Last Visit</th>
                 </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+                {filteredPatients.map((patient) => (
+                  <tr key={patient.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200 flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">
+                          {patient.name.charAt(0)}
+                      </div>
+                      {patient.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <StatusBadge status={patient.status} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      {patient.assignedDoctor}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      {patient.lastVisit}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-gray-200 dark:divide-gray-800">
+              {filteredPatients.map((patient) => (
+                <div key={patient.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm flex-shrink-0">
+                      {patient.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{patient.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{patient.assignedDoctor}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <StatusBadge status={patient.status} />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{patient.lastVisit}</span>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         ) : (
           /* EMPTY STATE */
           <div className="flex flex-col items-center justify-center py-12 text-center">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useTheme } from '@/components/theme-provider';
 import { registerUser } from '@/features/auth/authSlice'; // Import action
-import { User as UserIcon, Mail, Shield, Bell, Moon, Sun, Monitor, Plus, Users } from 'lucide-react';
+import { User as UserIcon, Mail, Bell, Moon, Sun, Monitor, Plus, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import type { User } from '@/types';
 
