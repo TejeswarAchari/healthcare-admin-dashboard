@@ -51,19 +51,19 @@ Perfect for internship portfolios, production deployments, and technical intervi
 ### 🖥️ Desktop View
 
 #### Login Page
-![Login Page](https://via.placeholder.com/800x600?text=Login+Page+-+Desktop)
+![Login Page](/public/loginPage.png)
 *Secure login with email validation, loading states, and error handling*
 
 #### Dashboard Overview
-![Dashboard](https://via.placeholder.com/800x600?text=Dashboard+-+KPI+Cards)
+![Dashboard](/public/dashBoardOverview.png)
 *Real-time KPI cards displaying Total Patients, Doctors, Appointments, and Active Clinics*
 
 #### Patients Management
-![Patients Table](https://via.placeholder.com/800x600?text=Patients+Table+-+Search+%26+Filter)
+![Patients Table](/public/patientsTable.png)
 *Interactive patients table with real-time search, status filtering, and CSV export*
 
 #### Settings Page
-![Settings](https://via.placeholder.com/800x600?text=Settings+-+Theme+%26+User+Management)
+![Settings](/public/SettingsPage.png)
 *Theme customization, user account info, and admin creation interface*
 
 ---
@@ -71,15 +71,15 @@ Perfect for internship portfolios, production deployments, and technical intervi
 ### 📱 Mobile & Tablet Views
 
 #### Mobile Sidebar Navigation
-![Mobile Sidebar](https://via.placeholder.com/400x600?text=Mobile+Drawer+Navigation)
+![Mobile Sidebar](/public/MobileSidebar.png)
 *Responsive hamburger menu with full navigation drawer*
 
 #### Mobile Patient Cards
-![Mobile Patients](https://via.placeholder.com/400x600?text=Mobile+Patient+Cards)
+![Mobile Patients](/public/MobilePatients.png)
 *Optimized card-based layout for patient information on small screens*
 
 #### Responsive Dashboard
-![Mobile Dashboard](https://via.placeholder.com/400x600?text=Mobile+Dashboard+Cards)
+![Mobile Dashboard](/public/MobileDashBoard.png)
 *Adaptive grid layout that stacks gracefully on mobile devices*
 
 ---
@@ -87,7 +87,7 @@ Perfect for internship portfolios, production deployments, and technical intervi
 ### 🌙 Dark Mode
 
 #### Dashboard in Dark Mode
-![Dark Dashboard](https://via.placeholder.com/800x600?text=Dashboard+-+Dark+Mode)
+![Dark Dashboard](/public/darkDashboard.png)
 *Beautiful dark theme with system-aware color adjustments*
 
 ---

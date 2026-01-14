@@ -15,6 +15,8 @@ const Settings = () => {
   // Form State
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
+  const [emailAlerts, setEmailAlerts] = useState(true);
+  const [smsAlerts, setSmsAlerts] = useState(false);
 
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,11 +189,37 @@ const newUser: User = {
           <div className="p-6 space-y-4">
              <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Alerts</span>
-                <div className="w-10 h-5 bg-indigo-600 rounded-full relative cursor-pointer"><div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
+                <button
+                  onClick={() => setEmailAlerts(!emailAlerts)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                    emailAlerts ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+                  }`}
+                  type="button"
+                  aria-label="Toggle email alerts"
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                      emailAlerts ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
              </div>
              <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SMS Alerts</span>
-                <div className="w-10 h-5 bg-gray-200 dark:bg-gray-700 rounded-full relative cursor-pointer"><div className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
+                <button
+                  onClick={() => setSmsAlerts(!smsAlerts)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                    smsAlerts ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+                  }`}
+                  type="button"
+                  aria-label="Toggle SMS alerts"
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                      smsAlerts ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
              </div>
           </div>
         </div>
