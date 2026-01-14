@@ -8,8 +8,8 @@ import { Loader2, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 const LOGIN_IMAGE = "https://png.pngtree.com/png-clipart/20240514/original/pngtree-online-doctor-landing-page-in-flat-style-png-image_15097169.png";
 
 const Login = () => {
-  const [email, setEmail] = useState('admin@healthcare.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   
   // Local validation state
