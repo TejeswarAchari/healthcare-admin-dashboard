@@ -7,6 +7,7 @@ import NotFound from '@/pages/NotFound';
 import Patients from '@/pages/Patients';
 import Settings from '@/pages/Settings';
 
+
 function App() {
   return (
     <Router>

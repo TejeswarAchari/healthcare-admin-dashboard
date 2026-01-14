@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { ErrorFallback } from '@/components/ErrorFallback';
 import App from './App';
 import './index.css';
+import { Toaster } from 'sonner';
 
 // FIX: Allow componentStack to be null or undefined to satisfy TypeScript
 const logErrorToService = (error: Error, info: { componentStack?: string | null }) => {
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           FallbackComponent={ErrorFallback}
           onError={logErrorToService}
         >
+          <Toaster richColors position="top-right" closeButton />
           <App />
         </ErrorBoundary>
       </ThemeProvider>

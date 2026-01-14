@@ -2,8 +2,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin';
+  role: 'admin'; 
   avatar?: string;
+  password?: string; 
 }
 
 export interface AuthState {
@@ -11,4 +12,5 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  registeredUsers: User[];
 }

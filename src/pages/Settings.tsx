@@ -1,10 +1,46 @@
-import { useAppSelector } from '@/hooks/redux';
+import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useTheme } from '@/components/theme-provider';
-import { User, Mail, Shield, Bell, Moon, Sun, Monitor } from 'lucide-react';
+import { registerUser } from '@/features/auth/authSlice'; // Import action
+import { User as UserIcon, Mail, Shield, Bell, Moon, Sun, Monitor, Plus, Users } from 'lucide-react';
+import { toast } from 'sonner';
+import type { User } from '@/types';
 
 const Settings = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  // Access registeredUsers from state (need to cast or update type definition)
+  const { user, registeredUsers } = useAppSelector((state: any) => state.auth);
   const { setTheme, theme } = useTheme();
+
+  // Form State
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+
+  const handleCreateUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!newUserName || !newUserEmail) return;
+
+    // Create new admin object
+const newUser: User = {
+      id: `u_${Date.now()}`,
+      name: newUserName,
+      email: newUserEmail,
+      role: 'admin', // Now TypeScript knows this is correct
+      avatar: `https://ui-avatars.com/api/?name=${newUserName}&background=random`,
+      password: 'password123' // Now valid because we added it to the Interface
+    };
+    // Dispatch to Redux
+    dispatch(registerUser(newUser));
+    
+    // Show Success Toast
+    toast.success("Admin Created Successfully", {
+      description: `Login with Email: ${newUserEmail} / Password: password123`
+    });
+
+    // Reset Form
+    setNewUserName('');
+    setNewUserEmail('');
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -15,11 +51,11 @@ const Settings = () => {
         <p className="text-gray-500 dark:text-gray-400">Manage your account preferences and system configuration.</p>
       </div>
 
-      {/* SECTION 1: ACCOUNT PROFILE (Read-Only from Redux) */}
+      {/* SECTION 1: ACCOUNT PROFILE (Read-Only) */}
       <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
           <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <User className="h-4 w-4" /> Account Information
+            <UserIcon className="h-4 w-4" /> Account Information
           </h3>
         </div>
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -36,116 +72,127 @@ const Settings = () => {
               {user?.email || 'admin@healthcare.com'}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* SECTION 2: USER MANAGEMENT (New Feature) */}
+      <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <Users className="h-4 w-4" /> Admin Management
+          </h3>
+          <span className="text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-md text-gray-500">
+            {registeredUsers?.length || 1} Users
+          </span>
+        </div>
+        <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          {/* List of Admins */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
-            <div className="mt-1 flex items-center gap-2">
-              <span className="inline-flex items-center rounded-md bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-400 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-400/30">
-                <Shield className="mr-1 h-3 w-3" />
-                {user?.role || 'Administrator'}
-              </span>
-            </div>
+             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Current Admins</h4>
+             <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+               {registeredUsers?.map((u: any) => (
+                 <div key={u.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                   <img src={u.avatar} alt={u.name} className="h-8 w-8 rounded-full bg-gray-200" />
+                   <div className="flex-1 min-w-0">
+                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{u.name}</p>
+                     <p className="text-xs text-gray-500 truncate">{u.email}</p>
+                   </div>
+                   <div className="px-2 py-1 rounded bg-indigo-50 dark:bg-indigo-900/30 text-[10px] font-mono text-indigo-600 dark:text-indigo-400">
+                     ADMIN
+                   </div>
+                 </div>
+               ))}
+             </div>
           </div>
+
+          {/* Create User Form */}
+          <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-5 border border-gray-100 dark:border-gray-800">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Add New Admin</h4>
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Full Name</label>
+                <input 
+                  type="text"
+                  value={newUserName}
+                  onChange={(e) => setNewUserName(e.target.value)}
+                  placeholder="John Doe"
+                  className="w-full rounded-md border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm p-2 shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Email Address</label>
+                <input 
+                  type="email"
+                  value={newUserEmail}
+                  onChange={(e) => setNewUserEmail(e.target.value)}
+                  placeholder="john@healthcare.com"
+                  className="w-full rounded-md border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm p-2 shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+              
+              <button 
+                type="submit"
+                className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-md text-sm font-medium transition-all shadow-sm hover:shadow active:scale-95"
+              >
+                <Plus className="h-4 w-4" /> Create User
+              </button>
+              
+              <p className="text-center text-xs text-gray-400 mt-3">
+                Default password: <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-gray-600 dark:text-gray-300">password123</code>
+              </p>
+            </form>
+          </div>
+
         </div>
       </div>
 
-      {/* SECTION 2: APPEARANCE (Functional Theme Switcher) */}
-      <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <Moon className="h-4 w-4" /> Appearance
-          </h3>
-        </div>
-        <div className="p-6">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Choose how the admin dashboard looks to you.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            
-            {/* Light Option */}
-            <button 
-              onClick={() => setTheme('light')}
-              className={`flex items-center justify-between p-4 rounded-lg border transition-all ${
-                theme === 'light' 
-                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 ring-1 ring-indigo-600' 
-                : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-gray-600'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500">
-                  <Sun className="h-4 w-4" />
-                </div>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Light</span>
-              </div>
-              {theme === 'light' && <div className="h-2 w-2 rounded-full bg-indigo-600"></div>}
-            </button>
-
-            {/* Dark Option */}
-            <button 
-              onClick={() => setTheme('dark')}
-              className={`flex items-center justify-between p-4 rounded-lg border transition-all ${
-                theme === 'dark' 
-                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 ring-1 ring-indigo-600' 
-                : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-gray-600'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-gray-900 border border-gray-700 flex items-center justify-center text-gray-400">
-                  <Moon className="h-4 w-4" />
-                </div>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Dark</span>
-              </div>
-              {theme === 'dark' && <div className="h-2 w-2 rounded-full bg-indigo-600"></div>}
-            </button>
-
-            {/* System Option */}
-            <button 
-              onClick={() => setTheme('system')}
-              className={`flex items-center justify-between p-4 rounded-lg border transition-all ${
-                theme === 'system' 
-                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 ring-1 ring-indigo-600' 
-                : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-gray-600'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500">
-                  <Monitor className="h-4 w-4" />
-                </div>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">System</span>
-              </div>
-              {theme === 'system' && <div className="h-2 w-2 rounded-full bg-indigo-600"></div>}
-            </button>
-
+      {/* SECTION 3: APPEARANCE & NOTIFICATIONS (Existing) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Appearance */}
+        <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <Moon className="h-4 w-4" /> Appearance
+            </h3>
+          </div>
+          <div className="p-6 grid grid-cols-3 gap-3">
+             {/* Small Theme Buttons */}
+             {['light', 'dark', 'system'].map((mode) => (
+                <button 
+                  key={mode}
+                  onClick={() => setTheme(mode as any)}
+                  className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all ${
+                    theme === mode 
+                    ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' 
+                    : 'border-gray-200 dark:border-gray-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {mode === 'light' && <Sun className="h-5 w-5 mb-2" />}
+                  {mode === 'dark' && <Moon className="h-5 w-5 mb-2" />}
+                  {mode === 'system' && <Monitor className="h-5 w-5 mb-2" />}
+                  <span className="text-xs font-medium capitalize">{mode}</span>
+                </button>
+             ))}
           </div>
         </div>
-      </div>
 
-      {/* SECTION 3: NOTIFICATIONS (Dummy Toggles) */}
-      <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <Bell className="h-4 w-4" /> Notifications
-          </h3>
-        </div>
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">Email Alerts</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Receive daily summaries of patient activity.</p>
-            </div>
-            {/* Dummy Switch */}
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-            </label>
+        {/* Notifications */}
+        <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <Bell className="h-4 w-4" /> Notifications
+            </h3>
           </div>
-          <div className="border-t border-gray-100 dark:border-gray-800 pt-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">SMS Notifications</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Get text messages for critical alerts.</p>
-            </div>
-             {/* Dummy Switch */}
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-            </label>
+          <div className="p-6 space-y-4">
+             <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Alerts</span>
+                <div className="w-10 h-5 bg-indigo-600 rounded-full relative cursor-pointer"><div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
+             </div>
+             <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SMS Alerts</span>
+                <div className="w-10 h-5 bg-gray-200 dark:bg-gray-700 rounded-full relative cursor-pointer"><div className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
+             </div>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { logout } from "@/features/auth/authSlice";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ModeToggle } from "./ModeToggle";
 import { Link, useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 import {
   LayoutDashboard,
@@ -13,6 +14,7 @@ import {
   LogOut,
   User as UserIcon,
   ChevronDown,
+  Stethoscope,
 } from "lucide-react";
 
 const SidebarItem = ({
@@ -41,6 +43,13 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const location = useLocation();
+
+  const handleComingSoon = (feature: string) => {
+    toast.info("Coming Soon", {
+      description: `${feature} will be available in an upcoming update.`,
+      duration: 3000,
+    });
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -74,16 +83,22 @@ const DashboardLayout = () => {
               active={location.pathname === "/patients"}
             />
           </Link>
-          <SidebarItem icon={Users} label="Doctors" />
-          <SidebarItem icon={Calendar} label="Appointments" />
+          <div onClick={() => handleComingSoon("Doctor profiles")}>
+            <SidebarItem icon={Stethoscope} label="Doctors" />
+          </div>
+
+          <div onClick={() => handleComingSoon("Appointment scheduling")}>
+            <SidebarItem icon={Calendar} label="Appointments" />
+          </div>
+
           <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
-           <Link to="/settings">
-            <SidebarItem 
-              icon={Settings} 
-              label="Settings" 
-              active={location.pathname === '/settings'} 
-            />
-          </Link>
+            <Link to="/settings">
+              <SidebarItem
+                icon={Settings}
+                label="Settings"
+                active={location.pathname === "/settings"}
+              />
+            </Link>
           </div>
         </nav>
       </aside>

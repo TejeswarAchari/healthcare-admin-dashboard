@@ -1,47 +1,63 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit'; // <--- Separate "type" import
+import type { PayloadAction } from '@reduxjs/toolkit';
 import type { AuthState, User } from '@/types';
 
-// Dummy Credentials [cite: 23, 24]
-const DUMMY_CREDS = {
-  email: 'admin@healthcare.com',
-  password: 'admin123'
+// 1. Setup Default Admin List (Simulating Database)
+const DEFAULT_USERS: User[] = [
+  {
+    id: 'u_001',
+    name: 'Dr. Admin',
+    email: 'admin@healthcare.com',
+    role: 'admin',
+    avatar: 'https://github.com/shadcn.png',
+    // In a real app, password would be hashed. For this demo, we store it here.
+    // We add a custom property to the type locally or just handle it in logic
+    // @ts-ignore: Adding password for demo purposes
+    password: 'admin123' 
+  }
+];
+
+// Helper to load users
+const loadUsers = (): User[] => {
+  const saved = localStorage.getItem('healthcare_users');
+  return saved ? JSON.parse(saved) : DEFAULT_USERS;
 };
 
-const initialState: AuthState = {
+// 2. Update State Interface to include the list
+interface ExtendedAuthState extends AuthState {
+  registeredUsers: User[];
+}
+
+const initialState: ExtendedAuthState = {
   user: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  registeredUsers: loadUsers(), // Load on start
 };
 
-// Async Thunk to simulate API Login
-// This adds the "loading" state automatically
+// 3. Updated Login Logic
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
-    // 1. Simulate Network Delay (800ms) for realism
+  async (credentials: { email: string; password: string }, { getState, rejectWithValue }) => {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // 2. Validate Credentials
-    if (
-      credentials.email === DUMMY_CREDS.email && 
-      credentials.password === DUMMY_CREDS.password
-    ) {
-      // Success: Return a mock user object
-      const user: User = {
-        id: 'u_001',
-        name: 'Dr. Admin',
-        email: credentials.email,
-        role: 'admin',
-        avatar: 'https://github.com/shadcn.png', // Placeholder avatar
-      };
-      // Persist to localStorage for "Remember Me" feel
-      localStorage.setItem('healthcare_user', JSON.stringify(user));
-      return user;
+    // Get current list of users from Redux state
+    const state = getState() as { auth: ExtendedAuthState };
+    const users = state.auth.registeredUsers;
+
+    // Check if any user matches credentials
+    const foundUser = users.find((u: any) => 
+      u.email === credentials.email && u.password === credentials.password
+    );
+
+    if (foundUser) {
+      // Remove password before saving to session
+      const { password, ...safeUser } = foundUser;
+      localStorage.setItem('healthcare_user', JSON.stringify(safeUser));
+      return safeUser as User;
     }
 
-    // Failure
     return rejectWithValue('Invalid email or password');
   }
 );
@@ -49,38 +65,43 @@ export const loginUser = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState: () => {
-    // Hydrate state from localStorage on refresh
+    // Hydrate login session
     const savedUser = localStorage.getItem('healthcare_user');
+    const baseState = { ...initialState, registeredUsers: loadUsers() };
+    
     if (savedUser) {
-      return { ...initialState, isAuthenticated: true, user: JSON.parse(savedUser) };
+      return { ...baseState, isAuthenticated: true, user: JSON.parse(savedUser) };
     }
-    return initialState;
+    return baseState;
   },
   reducers: {
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem('healthcare_user'); // Clear persistence
+      localStorage.removeItem('healthcare_user');
     },
     clearError: (state) => {
       state.error = null;
     },
+    // 4. NEW ACTION: Register User
+    registerUser: (state, action: PayloadAction<User & { password?: string }>) => {
+      state.registeredUsers.push(action.payload);
+      // Persist the updated list
+      localStorage.setItem('healthcare_users', JSON.stringify(state.registeredUsers));
+    }
   },
   extraReducers: (builder) => {
     builder
-      // Loading State
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      // Success State
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
         state.user = action.payload;
       })
-      // Error State
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = false;
@@ -89,5 +110,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, registerUser } = authSlice.actions;
 export default authSlice.reducer;
