@@ -30,7 +30,7 @@ function App() {
         </Route>
 
       {/* 404 Route: Catches EVERYTHING else */}
-        <Route path="*" element={<NotFound />} /> {/* <--- The Fix */}
+        <Route path="*" element={<NotFound />} /> 
       </Routes>
     </Router>
   );

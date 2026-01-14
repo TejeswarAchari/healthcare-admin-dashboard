@@ -37,7 +37,7 @@ const DashboardView = () => {
     <div className="space-y-8">
       {/* Header Section */}
       <div>
-        {/* ADDED dark:text-white HERE 👇 */}
+        
         <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Dashboard</h2>
         <p className="text-gray-500 dark:text-gray-400">Overview of your healthcare system metrics.</p>
       </div>
