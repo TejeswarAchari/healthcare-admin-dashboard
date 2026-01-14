@@ -38,7 +38,7 @@ Perfect for internship portfolios, production deployments, and technical intervi
 
 ## 🌐 Live Demo
 
-> **🔗 Live URL:** [Vercel Deployment Link - Coming Soon](#)
+> **🔗 Live URL:** [https://healthcare-admin-dashboard-one.vercel.app/](#)
 >
 > **Demo Credentials:**
 > - 📧 Email: `admin@healthcare.com`
