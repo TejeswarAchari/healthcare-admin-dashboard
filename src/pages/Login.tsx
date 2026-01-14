@@ -4,8 +4,8 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { loginUser, clearError } from '@/features/auth/authSlice';
 import { Loader2, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react'; 
 
-// Using the image URL you provided
-const LOGIN_IMAGE = "https://png.pngtree.com/png-clipart/20240514/original/pngtree-online-doctor-landing-page-in-flat-style-png-image_15097169.png";
+
+const LOGIN_IMAGE = "LoginImage.png";
 
 const Login = () => {
   const [email, setEmail] = useState('');
