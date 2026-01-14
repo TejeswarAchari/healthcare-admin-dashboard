@@ -4,6 +4,8 @@ import ProtectedRoute from '@/components/layout/ProtectedRoute';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import DashboardView from '@/features/dashboard/DashboardView';
 import NotFound from '@/pages/NotFound';
+import Patients from '@/pages/Patients';
+import Settings from '@/pages/Settings';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
             
             {/* The Main Dashboard Page (KPIs + Table) */}
             <Route path="/" element={<DashboardView />} />
+            <Route path="/patients" element={<Patients />} />
+            <Route path="/settings" element={<Settings />} />
             
           </Route>
         </Route>

@@ -18,9 +18,10 @@ const StatusBadge = ({ status }: { status: Patient['status'] }) => {
 
 interface RecentPatientsTableProps {
   patients: Patient[];
+  title?: string;
 }
 
-const RecentPatientsTable = ({ patients }: RecentPatientsTableProps) => {
+const RecentPatientsTable = ({ patients,title = "Recent Patients" }: RecentPatientsTableProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All'); // <--- New State
 
@@ -60,7 +61,7 @@ const RecentPatientsTable = ({ patients }: RecentPatientsTableProps) => {
       
       {/* HEADER WITH CONTROLS */}
       <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">Recent Patients</h3>
+        <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">{title}</h3>
         
         <div className="flex flex-col sm:flex-row gap-3">
           

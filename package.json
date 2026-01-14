@@ -24,6 +24,7 @@
     "react-error-boundary": "^6.0.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.12.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
